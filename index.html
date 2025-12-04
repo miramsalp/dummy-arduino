@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NETPIE Shadow Data Reader</title>
+</head>
+<body>
+  <h1>NETPIE Shadow Data Reader</h1>
+  <button id="get-shadow-data">Get Shadow Data</button>
+  <pre id="shadow-data-output">Shadow Data will appear here...</pre>
+
+  <script>
+    document.getElementById("get-shadow-data").addEventListener("click", function() {
+      const endpoint = "https://api.netpie.io/v2/device/shadow/data";
+      const alias = ""; 
+      const deviceToken = "YuzykSHEUk2MGQDws6g2CmQ6qdqJeX7Q";
+
+      fetch(`${endpoint}?alias=${alias}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Device ${deviceToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("shadow-data-output").textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(error => {
+        document.getElementById("shadow-data-output").textContent = `Error: ${error}`;
+      });
+    });
+  </script>
+</body>
+</html>

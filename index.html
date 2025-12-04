@@ -3,44 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NETPIE Tester</title>
+  <title>NETPIE Monitor: ระยะทาง and การสั่น</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f4; }
-    .container { 
-        background: white; padding: 40px; border-radius: 10px; 
-        display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+    body { font-family: 'Sarabun', sans-serif; text-align: center; margin-top: 30px; background-color: #f4f4f4; }
+    .dashboard { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    
+    .card {
+      background: white; padding: 30px; border-radius: 15px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 250px;
     }
-    h1 { color: #333; }
-    #display-area { font-size: 60px; color: #007bff; font-weight: bold; margin: 20px 0; }
-    button { 
-        padding: 10px 20px; font-size: 18px; cursor: pointer; 
-        background-color: #28a745; color: white; border: none; border-radius: 5px; 
+    .card h2 { margin: 0 0 10px; font-size: 20px; color: #555; }
+    
+    .status-text { font-size: 24px; font-weight: bold; margin-top: 10px; }
+    
+    .active { color: #28a745; }
+    .inactive { color: #dc3545; } 
+    .neutral { color: #6c757d; }
+
+    button {
+      margin-top: 30px; padding: 12px 24px; font-size: 16px; cursor: pointer;
+      background-color: #007bff; color: white; border: none; border-radius: 5px;
     }
-    button:hover { background-color: #218838; }
-    #raw-json { font-size: 12px; color: gray; margin-top: 20px; text-align: left; }
+    button:hover { background-color: #0056b3; }
+    #raw-json { margin-top: 30px; font-size: 12px; color: gray; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>อุณหภูมิจำลอง (ESP32)</h1>
-    
-    <div id="display-area">--</div>
-    
-    <button id="get-btn">กดเพื่อดึงค่าล่าสุด</button>
-    
-    <pre id="raw-json">Log: รอการกดปุ่ม...</pre>
+  <h1>NETPIE Monitor System</h1>
+  
+  <div class="dashboard">
+    <div class="card">
+      <h2>ระยะทาง (Distance)</h2>
+      <div id="dist-status" class="status-text neutral">รอข้อมูล...</div>
+      <div id="dist-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
+    </div>
+
+    <div class="card">
+      <h2>การสั่น (Vibration)</h2>
+      <div id="vib-status" class="status-text neutral">รอข้อมูล...</div>
+      <div id="vib-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
+    </div>
   </div>
 
+  <button id="get-shadow-data">อัปเดตสถานะล่าสุด</button>
+  
+  <pre id="shadow-data-output">JSON Log...</pre>
+
   <script>
-    document.getElementById("get-btn").addEventListener("click", function() {
-      const deviceToken = "8icVBECPMtnzz1wpKCYsU6FMLgAwpBMk"; 
-
+    document.getElementById("get-shadow-data").addEventListener("click", function() {
       const endpoint = "https://api.netpie.io/v2/device/shadow/data";
+      const alias = ""; 
       
-      document.getElementById("raw-json").textContent = "กำลังโหลด...";
+      const deviceToken = "7c021ab7-66f7-49ae-ac63-16a2d67b2421:8icVBECPMtnzz1wpKCYsU6FMLgAwpBMk"; 
 
-      fetch(endpoint, {
+      fetch(`${endpoint}?alias=${alias}`, {
         method: "GET",
         headers: {
           "Authorization": `Device ${deviceToken}`
@@ -48,16 +65,43 @@
       })
       .then(response => response.json())
       .then(data => {
-        document.getElementById("raw-json").textContent = JSON.stringify(data, null, 2);
+        document.getElementById("shadow-data-output").textContent = JSON.stringify(data, null, 2);
 
-        if (data && data.data && data.data.temp) {
-            document.getElementById("display-area").textContent = data.data.temp + " °C";
+        if (data && data.data) {
+            
+            // dist
+            const distValue = data.data.distance; 
+            const distElem = document.getElementById("dist-status");
+            
+            document.getElementById("dist-val").innerText = `(Value: ${distValue})`;
+
+            if (distValue == 1) {
+                distElem.innerText = "อยู่ในระยะ";
+                distElem.className = "status-text active";
+            } else {
+                distElem.innerText = "ไม่อยู่ในระยะ";
+                distElem.className = "status-text inactive"; 
+            }
+
+            const vibValue = data.data.vibration; 
+            const vibElem = document.getElementById("vib-status");
+
+            document.getElementById("vib-val").innerText = `(Value: ${vibValue})`;
+
+            if (vibValue == 1) {
+                vibElem.innerText = "มีการสั่น";
+                vibElem.className = "status-text inactive"; 
+            } else {
+                vibElem.innerText = "ไม่มีการสั่น";
+                vibElem.className = "status-text active"; 
+            }
+
         } else {
-            document.getElementById("display-area").textContent = "ไม่พบค่า";
+            alert("ไม่พบข้อมูล data ใน Shadow");
         }
       })
       .catch(error => {
-        document.getElementById("raw-json").textContent = `Error: ${error}`;
+        document.getElementById("shadow-data-output").textContent = `Error: ${error}`;
       });
     });
   </script>

@@ -1,15 +1,30 @@
 body {
-  font-family: 'Sarabun', sans-serif;
-  text-align: center;
+  font-family: "Sarabun", sans-serif;
+  text-align: left;
   margin-top: 30px;
   background-color: #f4f4f4;
 }
 
-.dashboard {
+.main-container {
   display: flex;
+  border-radius: 10px;
+
+  background-color: rgb(231, 231, 231);
+}
+
+.card-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
+
+  margin: 2vw;
+}
+
+.topic-1 {
+  margin-left: 16px;
 }
 
 .card {

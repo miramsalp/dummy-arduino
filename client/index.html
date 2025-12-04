@@ -5,29 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NETPIE Monitor: ระยะทาง and การสั่น</title>
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="terminal.css">
 </head>
 <body>
 
-  <h1>NETPIE Monitor System</h1>
+  <h1 class="topic-1">NETPIE Monitor System</h1>
+  <div class="main-container">
+    <div class="card-container">
   
-  <div class="dashboard">
-    <div class="card">
-      <h2>ระยะทาง (Distance)</h2>
-      <div id="dist-status" class="status-text neutral">รอข้อมูล...</div>
-      <div id="dist-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
+      <div class="card">
+        <h2>ระยะทาง (Distance)</h2>
+        <div id="dist-status" class="status-text neutral">รอข้อมูล...</div>
+        <div id="dist-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
+      </div>
+  
+      <div class="card">
+        <h2>การสั่น (Vibration)</h2>
+        <div id="vib-status" class="status-text neutral">รอข้อมูล...</div>
+        <div id="vib-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
+      </div>
+      <button id="get-shadow-data">อัปเดตสถานะล่าสุด</button>
+      <pre id="shadow-data-output">JSON Log...</pre>
     </div>
-
-    <div class="card">
-      <h2>การสั่น (Vibration)</h2>
-      <div id="vib-status" class="status-text neutral">รอข้อมูล...</div>
-      <div id="vib-val" style="font-size:12px; color:#aaa;">(Value: -)</div>
-    </div>
+    <div id="terminal"></div>
   </div>
-
-  <button id="get-shadow-data">อัปเดตสถานะล่าสุด</button>
   
-  <pre id="shadow-data-output">JSON Log...</pre>
 
   <script src="index.js"></script>
+  
 </body>
 </html>

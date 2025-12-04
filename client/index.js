@@ -1,3 +1,43 @@
+async function terminalDisplay(data) {
+    // terminal
+    let trigger = false;
+    const terminal = document.getElementById("terminal");
+    const log = document.createElement("div");
+    const time = document.createElement("div");
+    log.classList.add("log");  
+    
+    // แสดงวันที่และเวลาแบบอ่านง่าย
+    const now = new Date();
+    time.classList.add("time-log");  
+    time.textContent = now.toLocaleString('th-TH', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    
+    log.appendChild(time);
+    if(data.data.distance === 1) {
+      trigger = true;
+      const distanceDiv = document.createElement("div");
+      distanceDiv.textContent = "มีคนอยู่ใกล้เคียง";
+      distanceDiv.classList.add("distance-1");  
+      log.appendChild(distanceDiv);
+    } 
+    if(data.data.vibration === 1) {
+      trigger = true;
+      const distanceDiv = document.createElement("div");
+      distanceDiv.textContent = "มีการสั่นสะเทือน";
+      distanceDiv.classList.add("vibration-1");  
+      log.appendChild(distanceDiv);
+    } 
+
+    // log.textContent = content;
+    if(trigger) terminal.prepend(log);  
+}
+
 document.getElementById("get-shadow-data").addEventListener("click", function() {
   const endpoint = "https://api.netpie.io/v2/device/shadow/data";
   const alias = ""; 
@@ -15,7 +55,8 @@ document.getElementById("get-shadow-data").addEventListener("click", function() 
     document.getElementById("shadow-data-output").textContent = JSON.stringify(data, null, 2);
 
     if (data && data.data) {
-        
+
+    terminalDisplay(data);
       // dist
       const distValue = data.data.distance; 
       const distElem = document.getElementById("dist-status");

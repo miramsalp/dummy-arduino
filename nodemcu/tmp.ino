@@ -1,33 +1,67 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <WiFiClientSecure.h>
+#include <ArduinoJson.h>
 
-#define WIFI_SSID     "bas"
+#define WIFI_SSID "bas"
 #define WIFI_PASSWORD "22222222"
 
-// Netpie MQTT
-#define NETPIE_HOST   "broker.netpie.io"
-#define NETPIE_PORT   8883
-
-#define NETPIE_CLIENT_ID "6b884eea-8693-4705-ab8d-8f075c0fe471"
-#define NETPIE_TOKEN     "YuzykSHEUk2MGQDws6g2CmQ6qdqJeX7Q"
-#define NETPIE_SECRET    "dLdkJpUauGeDruRiD41vrFKK6DaM9czW"
+// Netpie Config
+#define NETPIE_HOST "broker.netpie.io"
+#define NETPIE_PORT 8883
+#define NETPIE_CLIENT_ID "bcb2bdc1-c5a5-467a-a991-91bcd6b51157"
+#define NETPIE_TOKEN "HtWewDzHfVakjX97a36eaJuNboASE88y"
+#define NETPIE_SECRET "kyv8oY1UzBLzFyJwVgB83NtMf8gowHkH"
 
 WiFiClientSecure wifiClient;
 PubSubClient client(wifiClient);
 
-void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message from NETPIE: ");
-  for (int i = 0; i < length; i++) Serial.print((char)payload[i]);
-  Serial.println();
-}
+static unsigned long lastMsg = 0;
 
+int sensor;
+int mode = 5;
+int readPin = 3;
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+
+  String message = "";
+  for (int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
+  Serial.println(message);
+
+  StaticJsonDocument<512> doc;
+  DeserializationError error = deserializeJson(doc, message);
+
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+  if (doc["data"].containsKey("on")) {
+    bool onStatus = doc["data"]["on"];
+
+    if (onStatus == true) {
+      Serial.println("Command: TURN ON");
+      digitalWrite(mode, HIGH);  // สั่งเปิดไฟ
+    } else {
+      Serial.println("Command: TURN OFF");
+      digitalWrite(mode, LOW);  // สั่งปิดไฟ
+    }
+  }
+}
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting NETPIE connection...");
     if (client.connect(NETPIE_CLIENT_ID, NETPIE_TOKEN, NETPIE_SECRET)) {
       Serial.println("connected");
-      client.subscribe("@msg/esp");
+
+      client.subscribe("@shadow/data/updated");  //
+
+
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -39,15 +73,17 @@ void reconnect() {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(4, INPUT);
-  
-  wifiClient.setInsecure();
+  pinMode(readPin, INPUT);
+  pinMode(mode, OUTPUT);
 
+  digitalWrite(mode, LOW);  //
+
+  wifiClient.setInsecure();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting WiFi");
+
   while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
     Serial.print(".");
-    delay(300);
   }
   Serial.println("\nWiFi Connected!");
 
@@ -56,25 +92,22 @@ void setup() {
 }
 
 void loop() {
-  if (!client.connected()) {
-    reconnect();
-  }
+  if (!client.connected()) reconnect();
   client.loop();
 
-  static unsigned long lastMsg = 0;
+  sensor = digitalRead(readPin);
+  Serial.print("value: ");
+  Serial.print(sensor);
+
+  if (sensor == 1) Serial.println(" Detect");
+  else Serial.println(" No Detect");
+
   unsigned long now = millis();
-
-  if (now - lastMsg > 5000) {
+  if (now - lastMsg > 1000) {
     lastMsg = now;
-
-    int dummyDist = random(0, 2); 
-    int dummyVib = random(0, 2);  
-
-    String jsonPayload = "{\"data\": { \"distance\": " + String(dummyDist) + ", \"vibration\": " + String(dummyVib) + " }}";
-
-    Serial.print("Sending Dummy Data: ");
-    Serial.println(jsonPayload);
-
+    String jsonPayload = "{\"data\": { \"distance\": " + String(sensor) + " }}";
     client.publish("@shadow/data/update", jsonPayload.c_str());
   }
+
+  delay(500);
 }

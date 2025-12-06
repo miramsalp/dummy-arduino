@@ -25,5 +25,5 @@ Open `client/index.js` and update the `deviceToken` variable:
 *   **`deviceToken`:** This is a concatenation of your Netpie `CLIENT_ID` and `TOKEN`, separated by a colon (`:`). Use the same values from your `esp32s3.ino` configuration.
 
     ```javascript
-    const deviceToken = "your_netpie_client_id:your_netpie_token"; // Example: "myClientId:myToken"
+    const DEVICE_TOKEN = "your_netpie_client_id:your_netpie_token"; // Example: "myClientId:myToken"
     ```

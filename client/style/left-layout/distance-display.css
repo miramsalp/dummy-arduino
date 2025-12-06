@@ -1,0 +1,25 @@
+.distance-display {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid rgb(44, 44, 44);
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.8);
+  width: 250px;
+  
+  animation: slide-in .5s ease-in forwards;
+}
+
+.distance-display h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #555;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translate(-50vw, 0);
+  }
+  90% {
+    transform: translate(3vw, 0);
+  }
+}

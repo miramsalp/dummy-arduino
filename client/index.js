@@ -4,14 +4,14 @@ const DEVICE_TOKEN = "6b884eea-8693-4705-ab8d-8f075c0fe471:YuzykSHEUk2MGQDws6g2C
 let monitorInterval = null;
 
 async function terminalDisplay(data) {
+  const mainContainer = document.querySelector(".main-container");
   if (data.data.distance !== 1) {
-    document.body.classList.remove("alert-bg");
+    if (mainContainer) mainContainer.classList.remove("alert-bg");
     return;
   }
   
   let trigger = true; 
   const terminal = document.getElementById("terminal");
-  const body = document.querySelector(".main-container");
   const log = document.createElement("div");
   const time = document.createElement("div");
   log.classList.add("log");
@@ -33,11 +33,11 @@ async function terminalDisplay(data) {
   if (data.data.on === 1) {
     messageDiv.textContent = "มีผู้บุกรุก "; 
     messageDiv.classList.add("intruder-alert");
-    body.classList.add("alert-bg");
+    mainContainer.classList.add("alert-bg");
   } else {
     messageDiv.textContent = "มีคนอยู่ใกล้เคียง"; 
     messageDiv.classList.add("distance-1");
-    body.classList.remove("alert-bg");
+    mainContainer.classList.remove("alert-bg");
   }
 
   log.appendChild(messageDiv);
@@ -84,7 +84,6 @@ function getShadowData() {
 
 document.getElementById("get-shadow-data").addEventListener("click", getShadowData);
 
-
 function startMonitoring() {
   if (monitorInterval === null) {
     getShadowData(); 
@@ -98,6 +97,7 @@ function startMonitoring() {
 document.addEventListener('DOMContentLoaded', function () {
   const toggleSwitch = document.getElementById('monitor-toggle');
   const statusText = document.getElementById('monitor-status-text');
+  const mainContainer = document.querySelector(".main-container");
 
   function updateDisplay(isOn) {
     toggleSwitch.checked = isOn;
@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       statusText.textContent = 'OFF';
       statusText.classList.remove('status-on');
+      mainContainer.classList.remove("alert-bg");
     }
   }
 

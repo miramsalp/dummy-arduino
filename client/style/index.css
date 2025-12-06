@@ -3,19 +3,21 @@
 :root {
   font-family: "Noto Sans Thai", sans-serif;
 }
+
 body, html {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
+  display: flex;
+  flex-direction: column;
   /* font-family: "Sarabun", sans-serif; */
-  background-color: #f4f4f4;
+  background-color: #ffffff;
 }
 
 .main-container {
   display: flex;
-  border-radius: 10px;
-
-  background-color: rgb(255, 255, 255);
+  flex: 1;
+  background-color: rgb(221, 221, 221);
 }
 
 .status-text {
@@ -63,3 +65,19 @@ body, html {
 .status-on {
   color: #4caf50 !important;
 }
+
+/* @keyframes blink-red {
+  0% {
+    background-color: #ffffff;
+  }
+  50% {
+    background-color: #ffcccc;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+.alert-bg {
+  animation: blink-red 1s infinite;
+} */

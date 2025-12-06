@@ -5,13 +5,13 @@ let monitorInterval = null;
 
 async function terminalDisplay(data) {
   if (data.data.distance !== 1) {
-    // document.body.classList.remove("alert-bg");
+    document.body.classList.remove("alert-bg");
     return;
   }
   
   let trigger = true; 
   const terminal = document.getElementById("terminal");
-  // const body = document.querySelector(".main-container");
+  const body = document.querySelector(".main-container");
   const log = document.createElement("div");
   const time = document.createElement("div");
   log.classList.add("log");
@@ -33,11 +33,11 @@ async function terminalDisplay(data) {
   if (data.data.on === 1) {
     messageDiv.textContent = "มีผู้บุกรุก "; 
     messageDiv.classList.add("intruder-alert");
-    // body.classList.add("alert-bg");
+    body.classList.add("alert-bg");
   } else {
     messageDiv.textContent = "มีคนอยู่ใกล้เคียง"; 
     messageDiv.classList.add("distance-1");
-    // body.classList.remove("alert-bg");
+    body.classList.remove("alert-bg");
   }
 
   log.appendChild(messageDiv);

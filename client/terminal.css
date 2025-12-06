@@ -27,8 +27,8 @@
 }
 
 .distance-1 {
-  color: red;
+  color: rgb(0, 0, 0);
 }
-.vibration-1 {
+.intruder-alert {
   color: red;
 }
